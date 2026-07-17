@@ -1,0 +1,53 @@
+<section class="home" data-testid="home-page">
+  <header class="home-hero">
+    <p class="eyebrow">
+      <svg data-p-icon="sparkles" [size]="14" aria-hidden="true"></svg>
+      Angular 22 · PrimeNG 22
+    </p>
+    <h1>Examples hub</h1>
+    <p class="lede">
+      Browse focused demos of Angular and PrimeNG features. Start with Signal Forms wired to
+      PrimeNG form components.
+    </p>
+  </header>
+
+  <div class="card-grid" data-testid="example-grid">
+    @for (example of examples; track example.id) {
+      <p-card styleClass="example-card" [attr.data-testid]="'example-card-' + example.id">
+        <ng-template #title>
+          <span class="card-title">
+            <svg data-p-icon="file-edit" [size]="18" aria-hidden="true"></svg>
+            {{ example.title }}
+          </span>
+        </ng-template>
+        <ng-template #subtitle>
+          <div class="tag-row">
+            @for (tag of example.tags; track tag) {
+              <p-tag [value]="tag" severity="secondary" />
+            }
+            <p-tag
+              [value]="example.status === 'ready' ? 'Ready' : 'Planned'"
+              [severity]="example.status === 'ready' ? 'success' : 'warn'"
+            />
+          </div>
+        </ng-template>
+
+        <p class="summary">{{ example.summary }}</p>
+
+        <ng-template #footer>
+          @if (isReady(example)) {
+            <p-button
+              [routerLink]="example.route"
+              label="Open example"
+              icon="pi pi-arrow-right"
+              iconPos="right"
+              [attr.data-testid]="'open-' + example.id"
+            />
+          } @else {
+            <p-button label="Coming soon" icon="pi pi-clock" [disabled]="true" />
+          }
+        </ng-template>
+      </p-card>
+    }
+  </div>
+</section>

@@ -1,0 +1,637 @@
+<p-toast />
+
+<section class="demo" data-testid="signal-forms-demo">
+  <header class="demo-header">
+    <p-button
+      routerLink="/"
+      label="Back to hub"
+      icon="pi pi-arrow-left"
+      [text]="true"
+      data-testid="back-home"
+    />
+    <h1>
+      <svg data-p-icon="file-edit" [size]="28" aria-hidden="true"></svg>
+      Signal Forms + PrimeNG
+    </h1>
+    <p class="lede">
+      Employee onboarding form using <code>form()</code>, schema rules, and PrimeNG controls bound with
+      <code>[formField]</code>. Invalid styling uses touched-only <code>p-invalid</code> so required fields
+      are not red on first paint.
+    </p>
+  </header>
+
+  <form class="demo-form" novalidate (submit)="onSubmit($event)" data-testid="employee-form">
+    <p-card>
+      <ng-template #title>
+        <span class="card-title">
+          <svg data-p-icon="user" [size]="18" aria-hidden="true"></svg>
+          Personal
+        </span>
+      </ng-template>
+      <div class="field-grid">
+        <div class="field">
+          <p-floatlabel variant="on">
+            <input
+              pInputText
+              id="firstName"
+              fluid
+              data-testid="firstName"
+              [formField]="employeeForm.personal.firstName"
+              [class.p-invalid]="
+                employeeForm.personal.firstName().touched() && employeeForm.personal.firstName().invalid()
+              "
+            />
+            <label for="firstName">First name</label>
+          </p-floatlabel>
+          <app-field-errors
+            [errors]="employeeForm.personal.firstName().errors()"
+            [show]="employeeForm.personal.firstName().touched()"
+            testId="firstName-errors"
+          />
+        </div>
+
+        <div class="field">
+          <p-floatlabel variant="on">
+            <input
+              pInputText
+              id="lastName"
+              fluid
+              data-testid="lastName"
+              [formField]="employeeForm.personal.lastName"
+              [class.p-invalid]="
+                employeeForm.personal.lastName().touched() && employeeForm.personal.lastName().invalid()
+              "
+            />
+            <label for="lastName">Last name</label>
+          </p-floatlabel>
+          <app-field-errors
+            [errors]="employeeForm.personal.lastName().errors()"
+            [show]="employeeForm.personal.lastName().touched()"
+          />
+        </div>
+
+        <div class="field">
+          <p-floatlabel variant="on">
+            <input
+              pInputText
+              id="email"
+              type="email"
+              fluid
+              data-testid="email"
+              [formField]="employeeForm.personal.email"
+              [class.p-invalid]="
+                employeeForm.personal.email().touched() && employeeForm.personal.email().invalid()
+              "
+            />
+            <label for="email">Email</label>
+          </p-floatlabel>
+          <app-field-errors
+            [errors]="employeeForm.personal.email().errors()"
+            [show]="employeeForm.personal.email().touched()"
+          />
+        </div>
+
+        <div class="field">
+          <p-floatlabel variant="on">
+            <input
+              pInputText
+              id="username"
+              fluid
+              data-testid="username"
+              [formField]="employeeForm.personal.username"
+              [class.p-invalid]="
+                employeeForm.personal.username().touched() && employeeForm.personal.username().invalid()
+              "
+            />
+            <label for="username">Username</label>
+          </p-floatlabel>
+          @if (employeeForm.personal.username().pending()) {
+            <small class="hint" data-testid="username-pending">Checking availability…</small>
+          }
+          <app-field-errors
+            [errors]="employeeForm.personal.username().errors()"
+            [show]="employeeForm.personal.username().touched()"
+            testId="username-errors"
+          />
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="age">Age</label>
+          <p-inputnumber
+            inputId="age"
+            fluid
+            data-testid="age"
+            [formField]="employeeForm.personal.age"
+            [class.p-invalid]="
+              employeeForm.personal.age().touched() && employeeForm.personal.age().invalid()
+            "
+          />
+          <app-field-errors
+            [errors]="employeeForm.personal.age().errors()"
+            [show]="employeeForm.personal.age().touched()"
+          />
+        </div>
+
+        <div class="field">
+          <label class="field-label">Birth date</label>
+          <app-iso-date-field
+            data-testid="birthDate"
+            [formField]="employeeForm.personal.birthDate"
+            [showInvalid]="
+              employeeForm.personal.birthDate().touched() && employeeForm.personal.birthDate().invalid()
+            "
+          />
+          <app-field-errors
+            [errors]="employeeForm.personal.birthDate().errors()"
+            [show]="employeeForm.personal.birthDate().touched()"
+          />
+        </div>
+
+        <div class="field field-span">
+          <label class="field-label" for="bio">Bio</label>
+          <textarea
+            pTextarea
+            id="bio"
+            rows="3"
+            fluid
+            data-testid="bio"
+            [formField]="employeeForm.personal.bio"
+            [class.p-invalid]="
+              employeeForm.personal.bio().touched() && employeeForm.personal.bio().invalid()
+            "
+          ></textarea>
+          <app-field-errors
+            [errors]="employeeForm.personal.bio().errors()"
+            [show]="employeeForm.personal.bio().touched()"
+          />
+        </div>
+      </div>
+    </p-card>
+
+    <p-card>
+      <ng-template #title>
+        <span class="card-title">
+          <svg data-p-icon="lock" [size]="18" aria-hidden="true"></svg>
+          Credentials
+        </span>
+      </ng-template>
+      <div class="field-grid">
+        <div class="field">
+          <label class="field-label" for="password">Password</label>
+          <app-password-field
+            inputId="password"
+            data-testid="password"
+            [feedback]="true"
+            [formField]="employeeForm.credentials.password"
+            [showInvalid]="
+              employeeForm.credentials.password().touched() &&
+              employeeForm.credentials.password().invalid()
+            "
+          />
+          <app-field-errors
+            [errors]="employeeForm.credentials.password().errors()"
+            [show]="employeeForm.credentials.password().touched()"
+          />
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="confirmPassword">Confirm password</label>
+          <app-password-field
+            inputId="confirmPassword"
+            data-testid="confirmPassword"
+            [feedback]="false"
+            [formField]="employeeForm.credentials.confirmPassword"
+            [showInvalid]="
+              employeeForm.credentials.confirmPassword().touched() &&
+              employeeForm.credentials.confirmPassword().invalid()
+            "
+          />
+          <app-field-errors
+            [errors]="employeeForm.credentials.confirmPassword().errors()"
+            [show]="employeeForm.credentials.confirmPassword().touched()"
+            testId="confirmPassword-errors"
+          />
+        </div>
+      </div>
+    </p-card>
+
+    <p-card>
+      <ng-template #title>
+        <span class="card-title">
+          <svg data-p-icon="briefcase" [size]="18" aria-hidden="true"></svg>
+          Employment
+        </span>
+      </ng-template>
+      <div class="field-grid">
+        <div class="field">
+          <label class="field-label">Department</label>
+          <app-select-field
+            [options]="departmentOptions"
+            placeholder="Select department"
+            data-testid="department"
+            [formField]="employeeForm.employment.department"
+            [showInvalid]="
+              employeeForm.employment.department().touched() &&
+              employeeForm.employment.department().invalid()
+            "
+          />
+          <app-field-errors
+            [errors]="employeeForm.employment.department().errors()"
+            [show]="employeeForm.employment.department().touched()"
+          />
+        </div>
+
+        <div class="field field-span">
+          <label class="field-label">Level</label>
+          <p-selectbutton
+            [options]="levelOptions"
+            optionLabel="label"
+            optionValue="value"
+            data-testid="level"
+            [formField]="employeeForm.employment.level"
+          />
+          <app-field-errors
+            [errors]="employeeForm.employment.level().errors()"
+            [show]="employeeForm.employment.level().touched()"
+          />
+        </div>
+
+        <div class="field">
+          <label class="field-label">Start date</label>
+          <app-iso-date-field
+            data-testid="startDate"
+            [formField]="employeeForm.employment.startDate"
+            [showInvalid]="
+              employeeForm.employment.startDate().touched() &&
+              employeeForm.employment.startDate().invalid()
+            "
+          />
+          <app-field-errors
+            [errors]="employeeForm.employment.startDate().errors()"
+            [show]="employeeForm.employment.startDate().touched()"
+          />
+        </div>
+
+        <div class="field">
+          <label class="field-label">Salary</label>
+          <p-inputnumber
+            mode="currency"
+            currency="USD"
+            locale="en-US"
+            fluid
+            data-testid="salary"
+            [formField]="employeeForm.employment.salary"
+            [class.p-invalid]="
+              employeeForm.employment.salary().touched() && employeeForm.employment.salary().invalid()
+            "
+          />
+          @if (employeeForm.employment.salary().disabled()) {
+            <small class="hint">Disabled for junior level (schema <code>disabled()</code>)</small>
+          }
+          <app-field-errors
+            [errors]="employeeForm.employment.salary().errors()"
+            [show]="employeeForm.employment.salary().touched()"
+          />
+        </div>
+
+        <div class="field field-span">
+          <label class="field-label">Skills</label>
+          <p-multiselect
+            [options]="skillOptions"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Select skills"
+            display="chip"
+            fluid
+            data-testid="skills"
+            [formField]="employeeForm.employment.skills"
+            [class.p-invalid]="
+              employeeForm.employment.skills().touched() && employeeForm.employment.skills().invalid()
+            "
+          />
+          <app-field-errors
+            [errors]="employeeForm.employment.skills().errors()"
+            [show]="employeeForm.employment.skills().touched()"
+          />
+        </div>
+
+        <div class="field inline-field">
+          <p-toggleswitch
+            inputId="remoteFriendly"
+            data-testid="remoteFriendly"
+            [formField]="employeeForm.employment.remoteFriendly"
+          />
+          <label for="remoteFriendly">Remote friendly</label>
+        </div>
+
+        <div class="field inline-field">
+          <p-checkbox
+            inputId="newsletter"
+            [binary]="true"
+            data-testid="newsletter"
+            [formField]="employeeForm.employment.newsletter"
+          />
+          <label for="newsletter">Subscribe to newsletter</label>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Satisfaction</label>
+          <p-rating data-testid="satisfaction" [formField]="employeeForm.employment.satisfaction" />
+          <app-field-errors
+            [errors]="employeeForm.employment.satisfaction().errors()"
+            [show]="employeeForm.employment.satisfaction().touched()"
+          />
+        </div>
+
+        <div class="field field-span">
+          <label class="field-label">
+            Focus score
+            <span class="hint">{{ employeeForm.employment.focusScore().value() }}</span>
+          </label>
+          <p-slider data-testid="focusScore" [formField]="employeeForm.employment.focusScore" />
+        </div>
+      </div>
+    </p-card>
+
+    <p-card>
+      <ng-template #title>
+        <span class="card-title">
+          <svg data-p-icon="map-marker" [size]="18" aria-hidden="true"></svg>
+          Address
+        </span>
+      </ng-template>
+      <div class="field-grid">
+        <div class="field field-span">
+          <p-floatlabel variant="on">
+            <input
+              pInputText
+              id="street"
+              fluid
+              data-testid="street"
+              [formField]="employeeForm.address.street"
+              [class.p-invalid]="
+                employeeForm.address.street().touched() && employeeForm.address.street().invalid()
+              "
+            />
+            <label for="street">Street</label>
+          </p-floatlabel>
+          <app-field-errors
+            [errors]="employeeForm.address.street().errors()"
+            [show]="employeeForm.address.street().touched()"
+          />
+        </div>
+
+        <div class="field">
+          <p-floatlabel variant="on">
+            <input
+              pInputText
+              id="city"
+              fluid
+              data-testid="city"
+              [formField]="employeeForm.address.city"
+              [class.p-invalid]="
+                employeeForm.address.city().touched() && employeeForm.address.city().invalid()
+              "
+            />
+            <label for="city">City</label>
+          </p-floatlabel>
+          <app-field-errors
+            [errors]="employeeForm.address.city().errors()"
+            [show]="employeeForm.address.city().touched()"
+          />
+        </div>
+
+        <div class="field">
+          <label class="field-label">Country</label>
+          <app-select-field
+            [options]="countryOptions"
+            placeholder="Select country"
+            data-testid="country"
+            [formField]="employeeForm.address.country"
+            [showInvalid]="
+              employeeForm.address.country().touched() && employeeForm.address.country().invalid()
+            "
+          />
+          <app-field-errors
+            [errors]="employeeForm.address.country().errors()"
+            [show]="employeeForm.address.country().touched()"
+          />
+        </div>
+
+        <div class="field">
+          <p-floatlabel variant="on">
+            <input
+              pInputText
+              id="zip"
+              fluid
+              data-testid="zip"
+              [formField]="employeeForm.address.zip"
+              [class.p-invalid]="
+                employeeForm.address.zip().touched() && employeeForm.address.zip().invalid()
+              "
+            />
+            <label for="zip">ZIP (required when US)</label>
+          </p-floatlabel>
+          <app-field-errors
+            [errors]="employeeForm.address.zip().errors()"
+            [show]="employeeForm.address.zip().touched()"
+            testId="zip-errors"
+          />
+        </div>
+      </div>
+    </p-card>
+
+    <p-card>
+      <ng-template #title>
+        <span class="card-title">
+          <svg data-p-icon="cog" [size]="18" aria-hidden="true"></svg>
+          Preferences & shipping
+        </span>
+      </ng-template>
+      <div class="field-grid">
+        <div class="field">
+          <p-floatlabel variant="on">
+            <input
+              pInputText
+              id="theme"
+              fluid
+              data-testid="theme"
+              [formField]="employeeForm.preferences.theme"
+            />
+            <label for="theme">Theme (readonly)</label>
+          </p-floatlabel>
+          <small class="hint">Bound with schema <code>readonly()</code></small>
+        </div>
+
+        <div class="field inline-field">
+          <p-checkbox
+            inputId="sameAsMailing"
+            [binary]="true"
+            data-testid="sameAsMailing"
+            [formField]="employeeForm.preferences.sameAsMailing"
+          />
+          <label for="sameAsMailing">Shipping same as mailing address</label>
+        </div>
+      </div>
+
+      @if (!employeeForm.shipping().hidden()) {
+        <p-divider />
+        <div class="field-grid" data-testid="shipping-section">
+          <div class="field field-span">
+            <p-floatlabel variant="on">
+              <input
+                pInputText
+                id="shippingStreet"
+                fluid
+                data-testid="shippingStreet"
+                [formField]="employeeForm.shipping.street"
+                [class.p-invalid]="
+                  employeeForm.shipping.street().touched() && employeeForm.shipping.street().invalid()
+                "
+              />
+              <label for="shippingStreet">Shipping street</label>
+            </p-floatlabel>
+            <app-field-errors
+              [errors]="employeeForm.shipping.street().errors()"
+              [show]="employeeForm.shipping.street().touched()"
+            />
+          </div>
+
+          <div class="field">
+            <p-floatlabel variant="on">
+              <input
+                pInputText
+                id="shippingCity"
+                fluid
+                data-testid="shippingCity"
+                [formField]="employeeForm.shipping.city"
+                [class.p-invalid]="
+                  employeeForm.shipping.city().touched() && employeeForm.shipping.city().invalid()
+                "
+              />
+              <label for="shippingCity">Shipping city</label>
+            </p-floatlabel>
+            <app-field-errors
+              [errors]="employeeForm.shipping.city().errors()"
+              [show]="employeeForm.shipping.city().touched()"
+            />
+          </div>
+        </div>
+      }
+    </p-card>
+
+    <p-card>
+      <ng-template #title>
+        <span class="card-title">
+          <svg data-p-icon="users" [size]="18" aria-hidden="true"></svg>
+          Emergency contacts
+        </span>
+      </ng-template>
+      <div class="contacts-toolbar">
+        <p-button
+          type="button"
+          label="Add contact"
+          icon="pi pi-plus"
+          data-testid="add-contact"
+          (onClick)="addEmergencyContact()"
+        />
+      </div>
+
+      @for (contact of employeeForm.emergencyContacts; track $index) {
+        <div class="contact-row field-grid" [attr.data-testid]="'contact-' + $index">
+          <div class="field">
+            <p-floatlabel variant="on">
+              <input
+                pInputText
+                [id]="'contact-name-' + $index"
+                fluid
+                [formField]="contact.name"
+                [class.p-invalid]="contact.name().touched() && contact.name().invalid()"
+              />
+              <label [for]="'contact-name-' + $index">Name</label>
+            </p-floatlabel>
+            <app-field-errors [errors]="contact.name().errors()" [show]="contact.name().touched()" />
+          </div>
+
+          <div class="field">
+            <p-floatlabel variant="on">
+              <input
+                pInputText
+                [id]="'contact-phone-' + $index"
+                fluid
+                [formField]="contact.phone"
+                [class.p-invalid]="contact.phone().touched() && contact.phone().invalid()"
+              />
+              <label [for]="'contact-phone-' + $index">Phone</label>
+            </p-floatlabel>
+            <app-field-errors [errors]="contact.phone().errors()" [show]="contact.phone().touched()" />
+          </div>
+
+          <div class="field">
+            <label class="field-label">Relation</label>
+            <app-select-field
+              [options]="relationOptions"
+              placeholder="Relation"
+              [formField]="contact.relation"
+              [showInvalid]="contact.relation().touched() && contact.relation().invalid()"
+            />
+            <app-field-errors
+              [errors]="contact.relation().errors()"
+              [show]="contact.relation().touched()"
+            />
+          </div>
+
+          <div class="field contact-actions">
+            <p-button
+              type="button"
+              label="Remove"
+              icon="pi pi-trash"
+              severity="danger"
+              [outlined]="true"
+              [attr.data-testid]="'remove-contact-' + $index"
+              (onClick)="removeEmergencyContact($index)"
+            />
+          </div>
+        </div>
+      } @empty {
+        <p class="hint">No contacts yet. Add one to see <code>applyEach</code> validation.</p>
+      }
+    </p-card>
+
+    @if (employeeForm().invalid() && employeeForm().touched()) {
+      <p-message
+        severity="warn"
+        text="Fix the highlighted fields before submitting."
+        data-testid="form-invalid-banner"
+      />
+    }
+
+    <div class="actions">
+      <p-button
+        type="submit"
+        label="Submit profile"
+        icon="pi pi-check"
+        data-testid="submit"
+        [loading]="employeeForm().pending()"
+        [disabled]="employeeForm().pending()"
+      />
+      <span class="hint" data-testid="form-status">
+        valid={{ employeeForm().valid() }} · dirty={{ employeeForm().dirty() }} · pending={{
+          employeeForm().pending()
+        }}
+      </span>
+    </div>
+  </form>
+
+  @if (submittedPayload()) {
+    <p-card styleClass="payload-card">
+      <ng-template #title>
+        <span class="card-title">
+          <svg data-p-icon="file-check" [size]="18" aria-hidden="true"></svg>
+          Submitted model
+        </span>
+      </ng-template>
+      <pre data-testid="submitted-payload">{{ submittedPayload() }}</pre>
+    </p-card>
+  }
+</section>
