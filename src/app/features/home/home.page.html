@@ -36,15 +36,19 @@
 
         <ng-template #footer>
           @if (isReady(example)) {
-            <p-button
+            <a
+              pButton
               [routerLink]="example.route"
-              label="Open example"
-              icon="pi pi-arrow-right"
-              iconPos="right"
               [attr.data-testid]="'open-' + example.id"
-            />
+            >
+              Open example
+              <svg data-p-icon="arrow-right" [size]="14" aria-hidden="true"></svg>
+            </a>
           } @else {
-            <p-button label="Coming soon" icon="pi pi-clock" [disabled]="true" />
+            <button pButton type="button" disabled>
+              <svg data-p-icon="clock" [size]="14" aria-hidden="true"></svg>
+              Coming soon
+            </button>
           }
         </ng-template>
       </p-card>

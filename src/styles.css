@@ -2,7 +2,6 @@
 
 @import 'tailwindcss';
 @plugin 'tailwindcss-primeui';
-@import 'primeicons/primeicons.css';
 
 html {
   color-scheme: light dark;

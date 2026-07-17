@@ -2,13 +2,10 @@
 
 <section class="demo" data-testid="signal-forms-demo">
   <header class="demo-header">
-    <p-button
-      routerLink="/"
-      label="Back to hub"
-      icon="pi pi-arrow-left"
-      [text]="true"
-      data-testid="back-home"
-    />
+    <a pButton routerLink="/" [text]="true" data-testid="back-home">
+      <svg data-p-icon="arrow-left" [size]="14" aria-hidden="true"></svg>
+      Back to hub
+    </a>
     <h1>
       <svg data-p-icon="file-edit" [size]="28" aria-hidden="true"></svg>
       Signal Forms + PrimeNG
@@ -528,13 +525,15 @@
         </span>
       </ng-template>
       <div class="contacts-toolbar">
-        <p-button
+        <button
+          pButton
           type="button"
-          label="Add contact"
-          icon="pi pi-plus"
           data-testid="add-contact"
-          (onClick)="addEmergencyContact()"
-        />
+          (click)="addEmergencyContact()"
+        >
+          <svg data-p-icon="plus" [size]="14" aria-hidden="true"></svg>
+          Add contact
+        </button>
       </div>
 
       @for (contact of employeeForm.emergencyContacts; track $index) {
@@ -582,15 +581,17 @@
           </div>
 
           <div class="field contact-actions">
-            <p-button
+            <button
+              pButton
               type="button"
-              label="Remove"
-              icon="pi pi-trash"
               severity="danger"
               [outlined]="true"
               [attr.data-testid]="'remove-contact-' + $index"
-              (onClick)="removeEmergencyContact($index)"
-            />
+              (click)="removeEmergencyContact($index)"
+            >
+              <svg data-p-icon="trash" [size]="14" aria-hidden="true"></svg>
+              Remove
+            </button>
           </div>
         </div>
       } @empty {
@@ -607,14 +608,19 @@
     }
 
     <div class="actions">
-      <p-button
+      <button
+        pButton
         type="submit"
-        label="Submit profile"
-        icon="pi pi-check"
         data-testid="submit"
-        [loading]="employeeForm().pending()"
         [disabled]="employeeForm().pending()"
-      />
+      >
+        @if (employeeForm().pending()) {
+          <svg data-p-icon="spinner" [size]="14" [spin]="true" aria-hidden="true"></svg>
+        } @else {
+          <svg data-p-icon="check" [size]="14" aria-hidden="true"></svg>
+        }
+        Submit profile
+      </button>
       <span class="hint" data-testid="form-status">
         valid={{ employeeForm().valid() }} · dirty={{ employeeForm().dirty() }} · pending={{
           employeeForm().pending()

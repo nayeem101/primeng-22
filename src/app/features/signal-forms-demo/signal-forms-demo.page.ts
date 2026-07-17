@@ -1,16 +1,21 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { form, FormField, submit } from '@angular/forms/signals';
+import { ArrowLeft } from '@primeicons/angular/arrow-left';
 import { Briefcase } from '@primeicons/angular/briefcase';
+import { Check } from '@primeicons/angular/check';
 import { Cog } from '@primeicons/angular/cog';
 import { FileCheck } from '@primeicons/angular/file-check';
 import { FileEdit } from '@primeicons/angular/file-edit';
 import { Lock } from '@primeicons/angular/lock';
 import { MapMarker } from '@primeicons/angular/map-marker';
+import { Plus } from '@primeicons/angular/plus';
+import { Spinner } from '@primeicons/angular/spinner';
+import { Trash } from '@primeicons/angular/trash';
 import { User } from '@primeicons/angular/user';
 import { Users } from '@primeicons/angular/users';
 import { MessageService } from 'primeng/api';
-import { Button } from 'primeng/button';
+import { ButtonDirective } from 'primeng/button';
 import { Card } from 'primeng/card';
 import { Checkbox } from 'primeng/checkbox';
 import { Divider } from 'primeng/divider';
@@ -46,7 +51,7 @@ import { FieldErrors } from './field-errors';
   imports: [
     RouterLink,
     FormField,
-    Button,
+    ButtonDirective,
     Card,
     Checkbox,
     Divider,
@@ -65,12 +70,17 @@ import { FieldErrors } from './field-errors';
     PasswordField,
     SelectField,
     FieldErrors,
+    ArrowLeft,
     Briefcase,
+    Check,
     Cog,
     FileCheck,
     FileEdit,
     Lock,
     MapMarker,
+    Plus,
+    Spinner,
+    Trash,
     User,
     Users,
   ],

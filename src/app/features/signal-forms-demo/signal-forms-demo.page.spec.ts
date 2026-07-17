@@ -110,7 +110,7 @@ describe('SignalFormsDemoPage', () => {
     await fixture.whenStable();
 
     const addButton = fixture.nativeElement.querySelector(
-      '[data-testid="add-contact"] button',
+      '[data-testid="add-contact"]',
     ) as HTMLButtonElement;
     addButton.click();
     await fixture.whenStable();
@@ -118,7 +118,7 @@ describe('SignalFormsDemoPage', () => {
     expect(fixture.nativeElement.querySelector('[data-testid="contact-0"]')).toBeTruthy();
 
     const removeButton = fixture.nativeElement.querySelector(
-      '[data-testid="remove-contact-0"] button',
+      '[data-testid="remove-contact-0"]',
     ) as HTMLButtonElement;
     removeButton.click();
     await fixture.whenStable();
