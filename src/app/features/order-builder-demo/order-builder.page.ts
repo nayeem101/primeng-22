@@ -17,7 +17,6 @@ import { Trash } from '@primeicons/angular/trash';
 import { MessageService } from 'primeng/api';
 import { ButtonDirective } from 'primeng/button';
 import { Card } from 'primeng/card';
-import { Divider } from 'primeng/divider';
 import { FloatLabel } from 'primeng/floatlabel';
 import { InputNumber } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
@@ -49,7 +48,6 @@ import { FieldErrors } from '../signal-forms-demo/field-errors';
     FormField,
     ButtonDirective,
     Card,
-    Divider,
     FloatLabel,
     InputNumber,
     InputText,
@@ -76,7 +74,6 @@ import { FieldErrors } from '../signal-forms-demo/field-errors';
   ],
   providers: [MessageService],
   templateUrl: './order-builder.page.html',
-  styleUrl: './order-builder.page.css',
 })
 export class OrderBuilderPage {
   private readonly messages = inject(MessageService);

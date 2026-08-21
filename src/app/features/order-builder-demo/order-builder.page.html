@@ -1,32 +1,49 @@
 <p-toast />
 
-<section class="demo" data-testid="order-builder-demo">
-  <header class="demo-header">
-    <a pButton routerLink="/" [text]="true" data-testid="back-home">
+<section class="mx-auto w-full max-w-4xl px-4 py-10" data-testid="order-builder-demo">
+  <header class="mb-8">
+    <a
+      pButton
+      routerLink="/"
+      [text]="true"
+      class="-ml-3 mb-4"
+      data-testid="back-home"
+    >
       <svg data-p-icon="arrow-left" [size]="14" aria-hidden="true"></svg>
       Back to hub
     </a>
-    <h1>
-      <svg data-p-icon="shopping-cart" [size]="28" aria-hidden="true"></svg>
-      Order builder
-    </h1>
-    <p class="lede">
-      Grouped line items validated with <code>applyEach()</code>, plus fields that switch on and off
-      from another field: schema <code>disabled()</code> + <code>applyWhen()</code> activate the gift
-      group, the subscription group, and the promo code based on order type and a toggle.
+
+    <div class="flex items-start gap-4">
+      <span
+        class="hidden h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-primary-500 to-primary-700 text-primary-contrast shadow-md sm:flex"
+      >
+        <svg data-p-icon="shopping-cart" [size]="24" aria-hidden="true"></svg>
+      </span>
+      <div>
+        <h1 class="m-0 text-2xl font-bold tracking-tight sm:text-3xl">Order builder</h1>
+        <p class="mt-1 text-sm text-surface-500">
+          Signal Forms · grouped array items &amp; conditionally active fields
+        </p>
+      </div>
+    </div>
+
+    <p class="mt-4 max-w-2xl leading-relaxed text-surface-600">
+      Line items are validated per row with <code>applyEach()</code>. The gift group, subscription
+      group, and promo code switch on and off from other fields via schema
+      <code>disabled()</code> + <code>applyWhen()</code>.
     </p>
   </header>
 
-  <form class="demo-form" novalidate (submit)="onSubmit($event)" data-testid="order-form">
+  <form class="grid gap-5" novalidate (submit)="onSubmit($event)" data-testid="order-form">
     <p-card>
       <ng-template #title>
-        <span class="card-title">
-          <svg data-p-icon="file-edit" [size]="18" aria-hidden="true"></svg>
+        <span class="flex items-center gap-2 text-base font-semibold">
+          <svg data-p-icon="file-edit" [size]="18" class="text-primary" aria-hidden="true"></svg>
           Order details
         </span>
       </ng-template>
-      <div class="field-grid">
-        <div class="field">
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div>
           <p-floatlabel variant="on">
             <input
               pInputText
@@ -47,8 +64,11 @@
           />
         </div>
 
-        <div class="field field-span">
-          <label class="field-label">Order type (drives active sections)</label>
+        <div class="sm:col-span-2">
+          <span class="mb-1.5 block text-sm font-semibold">
+            Order type
+            <span class="ml-1 font-normal text-surface-400">— drives the sections below</span>
+          </span>
           <p-selectbutton
             [options]="orderTypeOptions"
             optionLabel="label"
@@ -67,124 +87,189 @@
 
     <p-card>
       <ng-template #title>
-        <span class="card-title">
-          <svg data-p-icon="list-check" [size]="18" aria-hidden="true"></svg>
+        <span class="flex items-center gap-2 text-base font-semibold">
+          <svg data-p-icon="list-check" [size]="18" class="text-primary" aria-hidden="true"></svg>
           Line items
+          @if (model().items.length) {
+            <span
+              class="ml-1 rounded-full bg-primary-100 px-2 py-0.5 text-xs font-bold text-primary-700"
+            >
+              {{ model().items.length }}
+            </span>
+          }
         </span>
       </ng-template>
-      <div class="items-toolbar">
+
+      <div class="mb-4 flex flex-wrap items-center gap-3">
         <button pButton type="button" data-testid="add-item" (click)="addItem()">
           <svg data-p-icon="plus" [size]="14" aria-hidden="true"></svg>
           Add item
         </button>
-        <app-field-errors
-          [errors]="orderForm.items().errors()"
-          testId="items-errors"
-        />
+        <app-field-errors [errors]="orderForm.items().errors()" testId="items-errors" />
       </div>
 
-      @for (item of orderForm.items; track $index) {
-        <div class="item-row field-grid" [attr.data-testid]="'item-' + $index">
-          <div class="field item-product">
-            <label class="field-label">Product</label>
-            <app-select-field
-              [options]="productOptions"
-              placeholder="Select product"
-              [formField]="item.product"
-              [showInvalid]="item.product().touched() && item.product().invalid()"
-            />
-            <app-field-errors
-              [errors]="item.product().errors()"
-              [show]="item.product().touched()"
-            />
-          </div>
+      <div class="grid gap-3">
+        @for (item of orderForm.items; track $index) {
+          <div
+            class="rounded-xl border border-surface-200 p-4 transition-shadow hover:shadow-sm"
+            [attr.data-testid]="'item-' + $index"
+          >
+            <div class="mb-3 flex items-center justify-between">
+              <span
+                class="flex h-6 w-6 items-center justify-center rounded-full bg-primary-100 text-xs font-bold text-primary-700"
+              >
+                {{ $index + 1 }}
+              </span>
+              <button
+                pButton
+                type="button"
+                severity="danger"
+                [text]="true"
+                [rounded]="true"
+                [attr.data-testid]="'remove-item-' + $index"
+                (click)="removeItem($index)"
+                aria-label="Remove item"
+              >
+                <svg data-p-icon="trash" [size]="14" aria-hidden="true"></svg>
+              </button>
+            </div>
 
-          <div class="field">
-            <label class="field-label" [for]="'quantity-' + $index">Quantity</label>
-            <p-inputnumber
-              [inputId]="'quantity-' + $index"
-              fluid
-              [min]="1"
-              [max]="99"
-              [attr.data-testid]="'quantity-' + $index"
-              [formField]="item.quantity"
-              [class.p-invalid]="item.quantity().touched() && item.quantity().invalid()"
-            />
-            <app-field-errors
-              [errors]="item.quantity().errors()"
-              [show]="item.quantity().touched()"
-            />
-          </div>
+            <div class="grid items-start gap-4 sm:grid-cols-12">
+              <div class="sm:col-span-5">
+                <span class="mb-1.5 block text-sm font-semibold">Product</span>
+                <app-select-field
+                  [options]="productOptions"
+                  placeholder="Select product"
+                  [formField]="item.product"
+                  [showInvalid]="item.product().touched() && item.product().invalid()"
+                />
+                <app-field-errors
+                  [errors]="item.product().errors()"
+                  [show]="item.product().touched()"
+                />
+              </div>
 
-          <div class="field">
-            <label class="field-label" [for]="'unitPrice-' + $index">Unit price</label>
-            <p-inputnumber
-              [inputId]="'unitPrice-' + $index"
-              mode="currency"
-              currency="USD"
-              locale="en-US"
-              fluid
-              [min]="0.5"
-              [formField]="item.unitPrice"
-              [class.p-invalid]="item.unitPrice().touched() && item.unitPrice().invalid()"
-            />
-            <app-field-errors
-              [errors]="item.unitPrice().errors()"
-              [show]="item.unitPrice().touched()"
-            />
-          </div>
+              <div class="sm:col-span-2">
+                <label class="mb-1.5 block text-sm font-semibold" [for]="'quantity-' + $index">
+                  Qty
+                </label>
+                <p-inputnumber
+                  [inputId]="'quantity-' + $index"
+                  fluid
+                  [min]="1"
+                  [max]="99"
+                  [attr.data-testid]="'quantity-' + $index"
+                  [formField]="item.quantity"
+                  [class.p-invalid]="item.quantity().touched() && item.quantity().invalid()"
+                />
+                <app-field-errors
+                  [errors]="item.quantity().errors()"
+                  [show]="item.quantity().touched()"
+                />
+              </div>
 
-          <div class="field item-subtotal">
-            <span class="subtotal-label">Subtotal</span>
-            <span class="subtotal-value">{{ subtotal(model().items[$index]) | number: '1.2-2' }}</span>
-          </div>
+              <div class="sm:col-span-2">
+                <label class="mb-1.5 block text-sm font-semibold" [for]="'unitPrice-' + $index">
+                  Unit price
+                </label>
+                <p-inputnumber
+                  [inputId]="'unitPrice-' + $index"
+                  mode="currency"
+                  currency="USD"
+                  locale="en-US"
+                  fluid
+                  [min]="0.5"
+                  [formField]="item.unitPrice"
+                  [class.p-invalid]="item.unitPrice().touched() && item.unitPrice().invalid()"
+                />
+                <app-field-errors
+                  [errors]="item.unitPrice().errors()"
+                  [show]="item.unitPrice().touched()"
+                />
+              </div>
 
-          <div class="field item-actions">
-            <button
-              pButton
-              type="button"
-              severity="danger"
-              [outlined]="true"
-              [attr.data-testid]="'remove-item-' + $index"
-              (click)="removeItem($index)"
-            >
-              <svg data-p-icon="trash" [size]="14" aria-hidden="true"></svg>
-              Remove
-            </button>
+              <div class="sm:col-span-3">
+                <span class="mb-1.5 block text-sm font-semibold text-surface-400">Subtotal</span>
+                <div
+                  class="flex h-10 items-center justify-between rounded-lg border border-surface-200 bg-surface-50 px-3"
+                >
+                  <span class="text-xs uppercase tracking-wide text-surface-400">USD</span>
+                  <span class="font-semibold tabular-nums">
+                    {{ subtotal(model().items[$index]) | number: '1.2-2' }}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      } @empty {
-        <p class="hint" data-testid="items-empty">
-          No items yet. Add one to see <code>applyEach()</code> validation per row.
-        </p>
-      }
+        } @empty {
+          <div
+            class="flex flex-col items-center gap-2 rounded-xl border border-dashed border-surface-300 py-10 text-center"
+            data-testid="items-empty"
+          >
+            <svg data-p-icon="list-check" [size]="22" class="text-surface-300" aria-hidden="true" />
+            <p class="m-0 text-sm text-surface-500">
+              No items yet. Add one to see <code>applyEach()</code> validation per row.
+            </p>
+          </div>
+        }
+      </div>
 
       @if (model().items.length > 0) {
-        <p-divider />
-        <div class="total-row" data-testid="order-total">
-          <span>Order total</span>
-          <strong>{{ orderTotal() | number: '1.2-2' }}</strong>
+        <div
+          class="mt-4 flex items-center justify-between rounded-xl border border-primary-100 bg-primary-50 px-4 py-3"
+          data-testid="order-total"
+        >
+          <span class="font-medium text-primary-700">
+            Order total
+            <span class="ml-1 text-sm text-primary-600/70">
+              ({{ model().items.length }} {{ model().items.length === 1 ? 'item' : 'items' }})
+            </span>
+          </span>
+          <strong class="text-xl tabular-nums text-primary-700">
+            {{ orderTotal() | number: '1.2-2' }}
+          </strong>
         </div>
       }
     </p-card>
 
     <p-card>
       <ng-template #title>
-        <span class="card-title">
-          <svg data-p-icon="gift" [size]="18" aria-hidden="true"></svg>
+        <span class="flex items-center gap-2 text-base font-semibold">
+          <svg data-p-icon="gift" [size]="18" class="text-primary" aria-hidden="true"></svg>
           Gift options
         </span>
       </ng-template>
-      <p class="section-state" data-testid="gift-state">
-        @if (orderForm.gift().disabled()) {
-          Inactive — pick the <strong>Gift</strong> order type to enable these fields.
-        } @else {
-          Active — required because the order type is <strong>Gift</strong>.
-        }
-      </p>
-      <div class="field-grid" [class.section-inactive]="orderForm.gift().disabled()">
-        <div class="field">
-          <label class="field-label">Wrap style</label>
+
+      <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <p class="m-0 text-sm text-surface-500" data-testid="gift-state">
+          @if (orderForm.gift().disabled()) {
+            Pick the <strong>Gift</strong> order type to enable these fields.
+          } @else {
+            Required because the order type is <strong>Gift</strong>.
+          }
+        </p>
+        <span
+          class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold"
+          data-testid="gift-badge"
+          [class]="
+            orderForm.gift().disabled()
+              ? 'bg-surface-100 text-surface-500'
+              : 'bg-green-100 text-green-700'
+          "
+        >
+          <span
+            class="h-1.5 w-1.5 rounded-full"
+            [class]="
+              orderForm.gift().disabled() ? 'bg-surface-400' : 'bg-green-500'
+            "
+          ></span>
+          {{ orderForm.gift().disabled() ? 'Inactive' : 'Active' }}
+        </span>
+      </div>
+
+      <div class="grid gap-5 transition-opacity sm:grid-cols-2" [class.opacity-50]="orderForm.gift().disabled()">
+        <div>
+          <span class="mb-1.5 block text-sm font-semibold">Wrap style</span>
           <app-select-field
             [options]="wrapStyleOptions"
             placeholder="Select wrap style"
@@ -199,8 +284,8 @@
           />
         </div>
 
-        <div class="field field-span">
-          <label class="field-label" for="giftMessage">Gift message</label>
+        <div class="sm:col-span-2">
+          <label class="mb-1.5 block text-sm font-semibold" for="giftMessage">Gift message</label>
           <textarea
             pTextarea
             id="giftMessage"
@@ -223,24 +308,45 @@
 
     <p-card>
       <ng-template #title>
-        <span class="card-title">
-          <svg data-p-icon="refresh" [size]="18" aria-hidden="true"></svg>
+        <span class="flex items-center gap-2 text-base font-semibold">
+          <svg data-p-icon="refresh" [size]="18" class="text-primary" aria-hidden="true"></svg>
           Subscription schedule
         </span>
       </ng-template>
-      <p class="section-state" data-testid="subscription-state">
-        @if (orderForm.subscription().disabled()) {
-          Inactive — pick the <strong>Subscription</strong> order type to enable these fields.
-        } @else {
-          Active — required because the order type is <strong>Subscription</strong>.
-        }
-      </p>
+
+      <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <p class="m-0 text-sm text-surface-500" data-testid="subscription-state">
+          @if (orderForm.subscription().disabled()) {
+            Pick the <strong>Subscription</strong> order type to enable these fields.
+          } @else {
+            Required because the order type is <strong>Subscription</strong>.
+          }
+        </p>
+        <span
+          class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold"
+          data-testid="subscription-badge"
+          [class]="
+            orderForm.subscription().disabled()
+              ? 'bg-surface-100 text-surface-500'
+              : 'bg-green-100 text-green-700'
+          "
+        >
+          <span
+            class="h-1.5 w-1.5 rounded-full"
+            [class]="
+              orderForm.subscription().disabled() ? 'bg-surface-400' : 'bg-green-500'
+            "
+          ></span>
+          {{ orderForm.subscription().disabled() ? 'Inactive' : 'Active' }}
+        </span>
+      </div>
+
       <div
-        class="field-grid"
-        [class.section-inactive]="orderForm.subscription().disabled()"
+        class="grid gap-5 transition-opacity sm:grid-cols-2"
+        [class.opacity-50]="orderForm.subscription().disabled()"
       >
-        <div class="field">
-          <label class="field-label">Frequency</label>
+        <div>
+          <span class="mb-1.5 block text-sm font-semibold">Frequency</span>
           <app-select-field
             [options]="frequencyOptions"
             placeholder="Select frequency"
@@ -258,8 +364,8 @@
           />
         </div>
 
-        <div class="field">
-          <label class="field-label">First delivery</label>
+        <div>
+          <span class="mb-1.5 block text-sm font-semibold">First delivery</span>
           <app-iso-date-field
             data-testid="startDate"
             [formField]="orderForm.subscription.startDate"
@@ -279,22 +385,25 @@
 
     <p-card>
       <ng-template #title>
-        <span class="card-title">
-          <svg data-p-icon="tag" [size]="18" aria-hidden="true"></svg>
+        <span class="flex items-center gap-2 text-base font-semibold">
+          <svg data-p-icon="tag" [size]="18" class="text-primary" aria-hidden="true"></svg>
           Promo code
         </span>
       </ng-template>
-      <div class="field-grid">
-        <div class="field inline-field">
+
+      <div class="grid items-start gap-5 sm:grid-cols-2">
+        <div class="flex min-h-11 items-center gap-3">
           <p-toggleswitch
             inputId="applyDiscount"
             data-testid="applyDiscount"
             [formField]="orderForm.promo.applyDiscount"
           />
-          <label for="applyDiscount">Apply discount</label>
+          <label for="applyDiscount" class="cursor-pointer select-none font-medium">
+            Apply discount
+          </label>
         </div>
 
-        <div class="field">
+        <div>
           <p-floatlabel variant="on">
             <input
               pInputText
@@ -307,7 +416,7 @@
             <label for="promoCode">Code (e.g. TEA-100)</label>
           </p-floatlabel>
           @if (orderForm.promo.code().disabled()) {
-            <small class="hint" data-testid="promo-disabled-hint">
+            <small class="mt-1 block text-xs text-surface-500" data-testid="promo-disabled-hint">
               Disabled until “Apply discount” is on (schema <code>disabled()</code>)
             </small>
           }
@@ -328,7 +437,7 @@
       />
     }
 
-    <div class="actions">
+    <div class="flex flex-wrap items-center gap-3">
       <button pButton type="submit" data-testid="submit" [disabled]="orderForm().pending()">
         @if (orderForm().pending()) {
           <svg data-p-icon="spinner" [size]="14" [spin]="true" aria-hidden="true"></svg>
@@ -337,23 +446,44 @@
         }
         Place order
       </button>
-      <span class="hint" data-testid="form-status">
-        valid={{ orderForm().valid() }} · dirty={{ orderForm().dirty() }} · pending={{
-          orderForm().pending()
-        }}
-      </span>
+      <div class="flex flex-wrap gap-2 text-xs font-medium" data-testid="form-status">
+        <span
+          class="rounded-full px-2.5 py-1"
+          [class]="
+            orderForm().valid() ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+          "
+        >
+          valid={{ orderForm().valid() }}
+        </span>
+        <span
+          class="rounded-full px-2.5 py-1"
+          [class]="
+            orderForm().dirty() ? 'bg-blue-100 text-blue-700' : 'bg-surface-100 text-surface-500'
+          "
+        >
+          dirty={{ orderForm().dirty() }}
+        </span>
+        @if (orderForm().pending()) {
+          <span class="rounded-full bg-amber-100 px-2.5 py-1 text-amber-700">
+            pending={{ orderForm().pending() }}
+          </span>
+        }
+      </div>
     </div>
   </form>
 
   @if (submittedPayload()) {
-    <p-card styleClass="payload-card">
+    <p-card class="mt-5" styleClass="payload-card">
       <ng-template #title>
-        <span class="card-title">
-          <svg data-p-icon="file-check" [size]="18" aria-hidden="true"></svg>
+        <span class="flex items-center gap-2 text-base font-semibold">
+          <svg data-p-icon="file-check" [size]="18" class="text-primary" aria-hidden="true"></svg>
           Submitted model
         </span>
       </ng-template>
-      <pre data-testid="submitted-payload">{{ submittedPayload() }}</pre>
+      <pre
+        class="m-0 max-h-96 overflow-auto rounded-lg bg-surface-950 p-4 text-xs leading-relaxed text-surface-100"
+        data-testid="submitted-payload"
+      >{{ submittedPayload() }}</pre>
     </p-card>
   }
 </section>
