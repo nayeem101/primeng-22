@@ -19,4 +19,13 @@ export const EXAMPLE_CATALOG: readonly ExampleCard[] = [
     route: '/examples/signal-forms',
     status: 'ready',
   },
+  {
+    id: 'signal-forms-order',
+    title: 'Signal Forms · Order Builder',
+    summary:
+      'Grouped line items in an array with applyEach() validation, and fields that activate from another field via disabled() + applyWhen().',
+    tags: ['Signal Forms', 'Arrays', 'Conditional fields'],
+    route: '/examples/signal-forms-order',
+    status: 'ready',
+  },
 ] as const;

@@ -1,0 +1,359 @@
+<p-toast />
+
+<section class="demo" data-testid="order-builder-demo">
+  <header class="demo-header">
+    <a pButton routerLink="/" [text]="true" data-testid="back-home">
+      <svg data-p-icon="arrow-left" [size]="14" aria-hidden="true"></svg>
+      Back to hub
+    </a>
+    <h1>
+      <svg data-p-icon="shopping-cart" [size]="28" aria-hidden="true"></svg>
+      Order builder
+    </h1>
+    <p class="lede">
+      Grouped line items validated with <code>applyEach()</code>, plus fields that switch on and off
+      from another field: schema <code>disabled()</code> + <code>applyWhen()</code> activate the gift
+      group, the subscription group, and the promo code based on order type and a toggle.
+    </p>
+  </header>
+
+  <form class="demo-form" novalidate (submit)="onSubmit($event)" data-testid="order-form">
+    <p-card>
+      <ng-template #title>
+        <span class="card-title">
+          <svg data-p-icon="file-edit" [size]="18" aria-hidden="true"></svg>
+          Order details
+        </span>
+      </ng-template>
+      <div class="field-grid">
+        <div class="field">
+          <p-floatlabel variant="on">
+            <input
+              pInputText
+              id="customerName"
+              fluid
+              data-testid="customerName"
+              [formField]="orderForm.customerName"
+              [class.p-invalid]="
+                orderForm.customerName().touched() && orderForm.customerName().invalid()
+              "
+            />
+            <label for="customerName">Customer name</label>
+          </p-floatlabel>
+          <app-field-errors
+            [errors]="orderForm.customerName().errors()"
+            [show]="orderForm.customerName().touched()"
+            testId="customerName-errors"
+          />
+        </div>
+
+        <div class="field field-span">
+          <label class="field-label">Order type (drives active sections)</label>
+          <p-selectbutton
+            [options]="orderTypeOptions"
+            optionLabel="label"
+            optionValue="value"
+            data-testid="orderType"
+            [formField]="orderForm.orderType"
+          />
+          <app-field-errors
+            [errors]="orderForm.orderType().errors()"
+            [show]="orderForm.orderType().touched()"
+            testId="orderType-errors"
+          />
+        </div>
+      </div>
+    </p-card>
+
+    <p-card>
+      <ng-template #title>
+        <span class="card-title">
+          <svg data-p-icon="list-check" [size]="18" aria-hidden="true"></svg>
+          Line items
+        </span>
+      </ng-template>
+      <div class="items-toolbar">
+        <button pButton type="button" data-testid="add-item" (click)="addItem()">
+          <svg data-p-icon="plus" [size]="14" aria-hidden="true"></svg>
+          Add item
+        </button>
+        <app-field-errors
+          [errors]="orderForm.items().errors()"
+          testId="items-errors"
+        />
+      </div>
+
+      @for (item of orderForm.items; track $index) {
+        <div class="item-row field-grid" [attr.data-testid]="'item-' + $index">
+          <div class="field item-product">
+            <label class="field-label">Product</label>
+            <app-select-field
+              [options]="productOptions"
+              placeholder="Select product"
+              [formField]="item.product"
+              [showInvalid]="item.product().touched() && item.product().invalid()"
+            />
+            <app-field-errors
+              [errors]="item.product().errors()"
+              [show]="item.product().touched()"
+            />
+          </div>
+
+          <div class="field">
+            <label class="field-label" [for]="'quantity-' + $index">Quantity</label>
+            <p-inputnumber
+              [inputId]="'quantity-' + $index"
+              fluid
+              [min]="1"
+              [max]="99"
+              [attr.data-testid]="'quantity-' + $index"
+              [formField]="item.quantity"
+              [class.p-invalid]="item.quantity().touched() && item.quantity().invalid()"
+            />
+            <app-field-errors
+              [errors]="item.quantity().errors()"
+              [show]="item.quantity().touched()"
+            />
+          </div>
+
+          <div class="field">
+            <label class="field-label" [for]="'unitPrice-' + $index">Unit price</label>
+            <p-inputnumber
+              [inputId]="'unitPrice-' + $index"
+              mode="currency"
+              currency="USD"
+              locale="en-US"
+              fluid
+              [min]="0.5"
+              [formField]="item.unitPrice"
+              [class.p-invalid]="item.unitPrice().touched() && item.unitPrice().invalid()"
+            />
+            <app-field-errors
+              [errors]="item.unitPrice().errors()"
+              [show]="item.unitPrice().touched()"
+            />
+          </div>
+
+          <div class="field item-subtotal">
+            <span class="subtotal-label">Subtotal</span>
+            <span class="subtotal-value">{{ subtotal(model().items[$index]) | number: '1.2-2' }}</span>
+          </div>
+
+          <div class="field item-actions">
+            <button
+              pButton
+              type="button"
+              severity="danger"
+              [outlined]="true"
+              [attr.data-testid]="'remove-item-' + $index"
+              (click)="removeItem($index)"
+            >
+              <svg data-p-icon="trash" [size]="14" aria-hidden="true"></svg>
+              Remove
+            </button>
+          </div>
+        </div>
+      } @empty {
+        <p class="hint" data-testid="items-empty">
+          No items yet. Add one to see <code>applyEach()</code> validation per row.
+        </p>
+      }
+
+      @if (model().items.length > 0) {
+        <p-divider />
+        <div class="total-row" data-testid="order-total">
+          <span>Order total</span>
+          <strong>{{ orderTotal() | number: '1.2-2' }}</strong>
+        </div>
+      }
+    </p-card>
+
+    <p-card>
+      <ng-template #title>
+        <span class="card-title">
+          <svg data-p-icon="gift" [size]="18" aria-hidden="true"></svg>
+          Gift options
+        </span>
+      </ng-template>
+      <p class="section-state" data-testid="gift-state">
+        @if (orderForm.gift().disabled()) {
+          Inactive — pick the <strong>Gift</strong> order type to enable these fields.
+        } @else {
+          Active — required because the order type is <strong>Gift</strong>.
+        }
+      </p>
+      <div class="field-grid" [class.section-inactive]="orderForm.gift().disabled()">
+        <div class="field">
+          <label class="field-label">Wrap style</label>
+          <app-select-field
+            [options]="wrapStyleOptions"
+            placeholder="Select wrap style"
+            data-testid="wrapStyle"
+            [formField]="orderForm.gift.wrapStyle"
+            [showInvalid]="orderForm.gift.wrapStyle().touched() && orderForm.gift.wrapStyle().invalid()"
+          />
+          <app-field-errors
+            [errors]="orderForm.gift.wrapStyle().errors()"
+            [show]="orderForm.gift.wrapStyle().touched()"
+            testId="wrapStyle-errors"
+          />
+        </div>
+
+        <div class="field field-span">
+          <label class="field-label" for="giftMessage">Gift message</label>
+          <textarea
+            pTextarea
+            id="giftMessage"
+            rows="2"
+            fluid
+            data-testid="giftMessage"
+            [formField]="orderForm.gift.message"
+            [class.p-invalid]="
+              orderForm.gift.message().touched() && orderForm.gift.message().invalid()
+            "
+          ></textarea>
+          <app-field-errors
+            [errors]="orderForm.gift.message().errors()"
+            [show]="orderForm.gift.message().touched()"
+            testId="giftMessage-errors"
+          />
+        </div>
+      </div>
+    </p-card>
+
+    <p-card>
+      <ng-template #title>
+        <span class="card-title">
+          <svg data-p-icon="refresh" [size]="18" aria-hidden="true"></svg>
+          Subscription schedule
+        </span>
+      </ng-template>
+      <p class="section-state" data-testid="subscription-state">
+        @if (orderForm.subscription().disabled()) {
+          Inactive — pick the <strong>Subscription</strong> order type to enable these fields.
+        } @else {
+          Active — required because the order type is <strong>Subscription</strong>.
+        }
+      </p>
+      <div
+        class="field-grid"
+        [class.section-inactive]="orderForm.subscription().disabled()"
+      >
+        <div class="field">
+          <label class="field-label">Frequency</label>
+          <app-select-field
+            [options]="frequencyOptions"
+            placeholder="Select frequency"
+            data-testid="frequency"
+            [formField]="orderForm.subscription.frequency"
+            [showInvalid]="
+              orderForm.subscription.frequency().touched() &&
+              orderForm.subscription.frequency().invalid()
+            "
+          />
+          <app-field-errors
+            [errors]="orderForm.subscription.frequency().errors()"
+            [show]="orderForm.subscription.frequency().touched()"
+            testId="frequency-errors"
+          />
+        </div>
+
+        <div class="field">
+          <label class="field-label">First delivery</label>
+          <app-iso-date-field
+            data-testid="startDate"
+            [formField]="orderForm.subscription.startDate"
+            [showInvalid]="
+              orderForm.subscription.startDate().touched() &&
+              orderForm.subscription.startDate().invalid()
+            "
+          />
+          <app-field-errors
+            [errors]="orderForm.subscription.startDate().errors()"
+            [show]="orderForm.subscription.startDate().touched()"
+            testId="startDate-errors"
+          />
+        </div>
+      </div>
+    </p-card>
+
+    <p-card>
+      <ng-template #title>
+        <span class="card-title">
+          <svg data-p-icon="tag" [size]="18" aria-hidden="true"></svg>
+          Promo code
+        </span>
+      </ng-template>
+      <div class="field-grid">
+        <div class="field inline-field">
+          <p-toggleswitch
+            inputId="applyDiscount"
+            data-testid="applyDiscount"
+            [formField]="orderForm.promo.applyDiscount"
+          />
+          <label for="applyDiscount">Apply discount</label>
+        </div>
+
+        <div class="field">
+          <p-floatlabel variant="on">
+            <input
+              pInputText
+              id="promoCode"
+              fluid
+              data-testid="promoCode"
+              [formField]="orderForm.promo.code"
+              [class.p-invalid]="orderForm.promo.code().touched() && orderForm.promo.code().invalid()"
+            />
+            <label for="promoCode">Code (e.g. TEA-100)</label>
+          </p-floatlabel>
+          @if (orderForm.promo.code().disabled()) {
+            <small class="hint" data-testid="promo-disabled-hint">
+              Disabled until “Apply discount” is on (schema <code>disabled()</code>)
+            </small>
+          }
+          <app-field-errors
+            [errors]="orderForm.promo.code().errors()"
+            [show]="orderForm.promo.code().touched()"
+            testId="promoCode-errors"
+          />
+        </div>
+      </div>
+    </p-card>
+
+    @if (orderForm().invalid() && orderForm().touched()) {
+      <p-message
+        severity="warn"
+        text="Fix the highlighted fields before submitting."
+        data-testid="form-invalid-banner"
+      />
+    }
+
+    <div class="actions">
+      <button pButton type="submit" data-testid="submit" [disabled]="orderForm().pending()">
+        @if (orderForm().pending()) {
+          <svg data-p-icon="spinner" [size]="14" [spin]="true" aria-hidden="true"></svg>
+        } @else {
+          <svg data-p-icon="check" [size]="14" aria-hidden="true"></svg>
+        }
+        Place order
+      </button>
+      <span class="hint" data-testid="form-status">
+        valid={{ orderForm().valid() }} · dirty={{ orderForm().dirty() }} · pending={{
+          orderForm().pending()
+        }}
+      </span>
+    </div>
+  </form>
+
+  @if (submittedPayload()) {
+    <p-card styleClass="payload-card">
+      <ng-template #title>
+        <span class="card-title">
+          <svg data-p-icon="file-check" [size]="18" aria-hidden="true"></svg>
+          Submitted model
+        </span>
+      </ng-template>
+      <pre data-testid="submitted-payload">{{ submittedPayload() }}</pre>
+    </p-card>
+  }
+</section>

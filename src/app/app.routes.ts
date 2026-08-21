@@ -14,5 +14,11 @@ export const routes: Routes = [
       ),
     title: 'Signal Forms + PrimeNG',
   },
+  {
+    path: 'examples/signal-forms-order',
+    loadComponent: () =>
+      import('./features/order-builder-demo/order-builder.page').then((m) => m.OrderBuilderPage),
+    title: 'Signal Forms · Order Builder',
+  },
   { path: '**', redirectTo: '' },
 ];
